@@ -4,6 +4,13 @@
 
 package frc.robot;
 
+import java.util.List;
+
+import org.photonvision.PhotonCamera;
+import org.photonvision.common.dataflow.structures.PacketSerde;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -21,6 +28,7 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private final Field2d m_field = new Field2d();
+  private final PhotonCamera camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -28,7 +36,7 @@ public class Robot extends TimedRobot {
    */
   public Robot() {
 
-    // Do this in either robot or subsystem init
+// Do this in either robot or subsystem init
     SmartDashboard.putData("Field", m_field);
     // Do this in either robot periodic or subsystem periodic
     Pose2d testPose = new Pose2d();
@@ -82,7 +90,41 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() 
+  {
+    // Query the latest result from PhotonVision
+    List<PhotonPipelineResult> results = camera.getAllUnreadResults();
+    if (!results.isEmpty())
+    {
+      PhotonPipelineResult result = results.get(results.size() - 1);
+      boolean hasTargets = result.hasTargets();
+      System.out.println("hasTargets = " + hasTargets);
+
+      if (hasTargets)
+      {
+        // Get a list of currently tracked targets.
+        List<PhotonTrackedTarget> targets = result.getTargets();
+
+        // Show the Photoncamera data for all of the AprilTag targets found
+        for (PhotonTrackedTarget target : targets)
+        {
+          // Get information from target.
+          //double yaw = target.getYaw();
+          //double pitch = target.getPitch();
+          //double area = target.getArea();
+          //double skew = target.getSkew();
+
+          //System.out.println("yaw = " + yaw);
+          //System.out.println("pitch = " + pitch);
+          //System.out.println("area = " + area);
+          //System.out.println("skew = " + skew);
+
+          System.out.println("-".repeat(20) + "April tag: " + target.getFiducialId() + "-".repeat(20));
+          System.out.println(target.toString());
+        }
+      }
+    }
+  }
 
   /** This function is called periodically during operator control. */
   @Override
