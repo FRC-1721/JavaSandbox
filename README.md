@@ -1,4 +1,4 @@
-<h1 style="color:lightblue;">Reefscape Java Test</h1>
+<h1 style="color:lightblue;">JavaSandbox</h1>
 
 ## git
 - Type the following to clone the repository
