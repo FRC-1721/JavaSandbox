@@ -3,7 +3,7 @@
 ## git
 - Type the following to clone the repository
   ```bash
-  git clone https://github.com/Smittysports/ReefscapeJavaTest.git
+  git clone https://github.com/FRC-1721/JavaSandbox.git
 - Type the following to create your own branch
   ```bash
   git checkout -b YourBranchName
