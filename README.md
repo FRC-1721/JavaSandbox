@@ -44,6 +44,7 @@
   - Click 'Create pull request' or 'Create Draft request'
 
 <u>**Initial Setup of git**</u>
+- Access: You will need to be authorized for the desired repositories on github.com/FRC-1721 in order to add anything. See the Software lead and/or mentors for push access.
 - If you are using your own laptop or have your own login on a VM on the Proxmox server, you should tell git your user information by:
   1) Typing the following and replace "Your Name" with your actual name, make sure to use the double quotes
   ```bash
