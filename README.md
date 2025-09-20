@@ -45,37 +45,55 @@
 
 <u>**Initial Setup of git**</u>
 - If you are using your own laptop or have your own login on a VM on the Proxmox server, you should tell git your user information by:
-  1) Typing the following and replace "Your Name" with your actual name, make sure to use the double quotes <br>
+  1) Typing the following and replace "Your Name" with your actual name, make sure to use the double quotes
+  ```bash
   git config --global user.name "FirstName LastName"
-  2) Typing the following and replace "your_email@example.com" with the email you use with GitHub, make sure to use the double quotes <br>
+  ```
+  2) Typing the following and replace "your_email@example.com" with the email you use with GitHub, make sure to use the double quotes
+  ```bash
   git config --global user.email "your_email@example.com"
+  ```
 - If you are using a shared laptop, you should tell git your user information by:
   1) Going to the directory that contains your repository
-  2) Typing the following and replace "Your Name" with your actual name, make sure to use the double quotes <br>
-git config user.name "FirstName LastName"
-  3) Typing the following and replace "your_email@example.com" with the email you use with GitHub, make sure to use the double quotes <br>
+  2) Typing the following and replace "Your Name" with your actual name, make sure to use the double quotes
+  ```bash
+  git config user.name "FirstName LastName"
+  ```
+  3) Typing the following and replace "your_email@example.com" with the email you use with GitHub, make sure to use the double quotes
+  ```bash
   git config user.email "your_email@example.com"
+  ```
 - Create ssh keys <br>
   1) These are mandatory for pushing your code to GitHub
-  2) Run this command to generate a new SSH key <br>
+  2) Run this command to generate a new SSH key
+  ```bash
   ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+  ```
      - Replace "your_email@example.com" with the email you use for GitHub
      - Accept the default location to save the key
      - You do not need to use a passphrase, but it is always recommended. If you forget it, you will have to go through this process again
-  3) Start the ssh agent <br>
+  3) Start the ssh agent
+  ```bash
   eval "$(ssh-agent -s)"
-  4) Add your SSH private key to the agent <br>
+  ```
+  4) Add your SSH private key to the agent
+  ```bash
   ssh-add ~/.ssh/id_rsa
-  5) Share your ssh public key with GitHub by: <br>
-  a) cat ~/.ssh/id_rsa.pub
+  ```
+  5) Share your ssh public key with GitHub by:
+  ```bash
+  cat ~/.ssh/id_rsa.pub
+  ```
      - This will display your public SSH key. The key should start with ssh-rsa and end with your email address.
      - Copy the entire key (including ssh-rsa at the beginning and your email at the end). <br>
-  b) Log in to your personal GitHub account, go to 'settings', go to 'SSH and GPG keys' <br>
-  c) Click the 'New SSH key' button <br>
-  d) Paste your public key into the 'Key field' and give it a title <br>
-  e) Click 'Add SSH key' <br>
-  d) Test if it works with: <br>
+  a) Log in to your personal GitHub account, go to 'settings', go to 'SSH and GPG keys' <br>
+  b) Click the 'New SSH key' button <br>
+  c) Paste your public key into the 'Key field' and give it a title <br>
+  d) Click 'Add SSH key' <br>
+  e) Test if it works with:
+  ```bash
   ssh -T git@github.com
+  ```
 - Use SSH over a different port
   - The firewall blocks the default SSH port (22), but GitHub supports SSH over port 443, which is usually used for HTTPS
   - Edit the ~/.ssh/config file and add or change it to the following <br>
@@ -84,5 +102,7 @@ git config user.name "FirstName LastName"
     Hostname ssh.github.com
     Port 443
   ```
-  - Test the connection with: <br>
+  - Test the connection with:
+  ```bash
   ssh -T git@github.com
+  ```
