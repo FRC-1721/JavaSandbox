@@ -22,7 +22,15 @@
 # git
 - Type the following from the command line to clone the repository
   ```bash
-  git clone https://github.com/FRC-1721/JavaSandbox.git
+  git clone git@github.com:FRC-1721/JavaSandbox.git
+- Check the type of remote communication used for the repository. Useful if you are trying to push code and your repository was accidentally cloned as HTTPS.
+  ```bash
+  git@github.com:FRC-1721/JavaSandbox.git
+- Change the type of communication manually or change your local code to point to a different repository. 
+  - Example 1... I cloned the repository using HTTPS and then could not do a push, since I need to use SSH. 
+  - Example 2... I created the JavaSandbox repository in my own personal GitHub account and then created a new one in the FRC-1721 GitHub; I then used this command to reassociate my code so  I could push it.
+  ```bash
+  git remote set-url origin git@github.com:FRC-1721/JavaSandbox.git
 - Type the following to create your own branch
   ```bash
   git checkout -b YourBranchName
