@@ -10,6 +10,8 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -29,6 +31,8 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private final Field2d m_field = new Field2d();
   private PhotonCamera camera;
+  private Joystick joystickController;
+  static int teleopCounter = 0;
 
   /** Constructor
    * Do not put code in here that relies on other systems to be ready.
@@ -51,6 +55,14 @@ public class Robot extends TimedRobot {
     NetworkTableInstance.getDefault().startServer(); // Starts the NetworkTables server
 
     camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
+
+    // Initialize the joystick
+    joystickController = new Joystick(0);
+
+
+    for (int i = 0; i < 6; i++) {
+      System.out.println("Joystick " + i + " name: " + DriverStation.getJoystickName(i));
+  }
 
     // Do this in either robot or subsystem init
     SmartDashboard.putData("Field", m_field);
@@ -144,7 +156,22 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    // Increment the counter
+    //teleopCounter++;
+
+    // Run the code once every 100 iterations
+    //if (teleopCounter % 100 == 0) {
+      //double leftX = joystickController.getRawAxis(0);
+      //double leftY = joystickController.getRawAxis(1);
+      //System.out.println("LeftX: " + leftX + ", LeftY: " + leftY);
+    //}
+
+    boolean xButton = joystickController.getRawButton(2); 
+    if (xButton) {
+      System.out.println("X Button is pressed");
+    }
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
