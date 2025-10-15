@@ -7,11 +7,11 @@ package frc.robot;
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.common.dataflow.structures.PacketSerde;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -28,15 +28,31 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private final Field2d m_field = new Field2d();
-  private final PhotonCamera camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
+  private PhotonCamera camera;
+
+  /** Constructor
+   * Do not put code in here that relies on other systems to be ready.
+   *
+   * The HAL (hardware abstraction layer) and other systems like SmartDashboard, Field2d,
+   * and SendableChooser may not be fully initialized when the constructor runs.
+   */
+  public Robot() {
+
+  }
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
-  public Robot() {
+  @Override
+  public void robotInit() {
+    System.out.println("robotInit.");
 
-// Do this in either robot or subsystem init
+    NetworkTableInstance.getDefault().startServer(); // Starts the NetworkTables server
+
+    camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
+
+    // Do this in either robot or subsystem init
     SmartDashboard.putData("Field", m_field);
     // Do this in either robot periodic or subsystem periodic
     Pose2d testPose = new Pose2d();
