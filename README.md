@@ -134,3 +134,4 @@
   sudo apt install joystick
   jstest /dev/input/js1
   ```
+- In the Simulator, make sure to drag the detected  'System joystick' to Joysticks

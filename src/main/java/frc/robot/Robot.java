@@ -59,11 +59,6 @@ public class Robot extends TimedRobot {
     // Initialize the joystick
     joystickController = new Joystick(0);
 
-
-    for (int i = 0; i < 6; i++) {
-      System.out.println("Joystick " + i + " name: " + DriverStation.getJoystickName(i));
-  }
-
     // Do this in either robot or subsystem init
     SmartDashboard.putData("Field", m_field);
     // Do this in either robot periodic or subsystem periodic
@@ -167,9 +162,14 @@ public class Robot extends TimedRobot {
       //System.out.println("LeftX: " + leftX + ", LeftY: " + leftY);
     //}
 
-    boolean xButton = joystickController.getRawButton(2); 
-    if (xButton) {
-      System.out.println("X Button is pressed");
+    boolean button2 = joystickController.getRawButtonPressed(2); 
+    if (button2) {
+      System.out.println("Button 2 is pressed");
+    }
+
+    boolean button3 = joystickController.getRawButtonPressed(3); 
+    if (button3) {
+      System.out.println("Button 3 is pressed");
     }
   }
 
@@ -183,11 +183,21 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when test mode is enabled. */
   @Override
-  public void testInit() {}
+  public void testInit() {
+    System.out.println("Joystick name: " + DriverStation.getJoystickName(0));
+    System.out.println("Joystick axis count: " + DriverStation.getStickAxisCount(0));
+    System.out.println("Joystick  button count = " + joystickController.getButtonCount());
+  }
 
-  /** This function is called periodically during test mode. */
+  /** This function is called periodically during test mode. 
+   * 
+   * When buttons are pressed on a controller, the PhotonVision camera AprilTag readings
+   * will be shown.
+  */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+
+  }
 
   /** This function is called once when the robot is first started up. */
   @Override
