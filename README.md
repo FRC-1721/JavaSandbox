@@ -115,3 +115,23 @@
   ```bash
   ssh -T git@github.com
   ```
+
+# PS2 Controller
+- Type the following to list the USB devices available
+  ```bash
+  lsusb
+  ```
+  or
+  ```bash
+  ls /dev/input
+  ```
+- Type the following to see what the system is mapping the input to
+  ```bash
+  sudo dmesg | grep -i usb
+  ```
+- Use the following to test the joystick (my input is on js1)
+  ```bash
+  sudo apt install joystick
+  jstest /dev/input/js1
+  ```
+- In the Simulator, make sure to drag the detected  'System joystick' to Joysticks
