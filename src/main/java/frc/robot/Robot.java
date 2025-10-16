@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.OperatorConstants;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -31,8 +33,9 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private final Field2d m_field = new Field2d();
   private PhotonCamera camera;
-  private Joystick joystickController;
+  //private Joystick joystickController;
   static int teleopCounter = 0;
+  private Controller controller;
 
   /** Constructor
    * Do not put code in here that relies on other systems to be ready.
@@ -57,7 +60,7 @@ public class Robot extends TimedRobot {
     camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
 
     // Initialize the joystick
-    joystickController = new Joystick(0);
+    controller = new Controller();
 
     // Do this in either robot or subsystem init
     SmartDashboard.putData("Field", m_field);
@@ -76,9 +79,13 @@ public class Robot extends TimedRobot {
    *
    * <p>This runs after the mode specific periodic functions, but before LiveWindow and
    * SmartDashboard integrated updating.
+   *
+   * The CommandScheduler is responsible for managing the execution of commands in a command-based robot program.
    */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+  }
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
@@ -115,6 +122,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() 
   {
+    controller.enableButtonHandler(true, Controller.RobotMode.TELEOP);
     // Query the latest result from PhotonVision
     List<PhotonPipelineResult> results = camera.getAllUnreadResults();
     if (!results.isEmpty())
@@ -162,15 +170,14 @@ public class Robot extends TimedRobot {
       //System.out.println("LeftX: " + leftX + ", LeftY: " + leftY);
     //}
 
-    boolean button2 = joystickController.getRawButtonPressed(2); 
-    if (button2) {
-      System.out.println("Button 2 is pressed");
+    /*/
+    for (int i = 1; i <= joystickController.getButtonCount(); ++i) {
+      boolean buttonPressed = joystickController.getRawButtonPressed(i); 
+      if (buttonPressed) {
+        System.out.println("Button " + i + " is pressed");
+      }
     }
-
-    boolean button3 = joystickController.getRawButtonPressed(3); 
-    if (button3) {
-      System.out.println("Button 3 is pressed");
-    }
+      */
   }
 
   /** This function is called once when the robot is disabled. */
@@ -184,20 +191,13 @@ public class Robot extends TimedRobot {
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
-    System.out.println("Joystick name: " + DriverStation.getJoystickName(0));
-    System.out.println("Joystick axis count: " + DriverStation.getStickAxisCount(0));
-    System.out.println("Joystick  button count = " + joystickController.getButtonCount());
+    controller.showStatus();
+    controller.enableButtonHandler(true, Controller.RobotMode.TEST);
   }
 
-  /** This function is called periodically during test mode. 
-   * 
-   * When buttons are pressed on a controller, the PhotonVision camera AprilTag readings
-   * will be shown.
-  */
+  /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {
-
-  }
+  public void testPeriodic() {}
 
   /** This function is called once when the robot is first started up. */
   @Override
