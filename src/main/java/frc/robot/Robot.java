@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
     camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
 
     // Initialize the joystick
-    controller = new Controller();
+    controller = new Controller(m_field);
 
     // Do this in either robot or subsystem init
     SmartDashboard.putData("Field", m_field);
