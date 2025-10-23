@@ -1,10 +1,14 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants.OperatorConstants;
 
 import java.util.ArrayList;
@@ -23,16 +27,35 @@ import java.util.stream.IntStream;
  * 
  * This creates a JoystickButton object and immediately calls the onTrue method on it, passing in a new ExampleCommand object.
  */
+
+/** Trigger
+ * 
+ * TBD
+ */
+
+/** Command 
+ * 
+ * TBD
+ */
 public class Controller {
+    Field2d field;
     private final Joystick joystick;
     List<Trigger> buttonTriggers = new ArrayList<>();
+    List<Trigger> axisTriggers = new ArrayList<>();
+    Pose2d currentPose = new Pose2d();
+    private double leftAxisHorizontalPos = 0.0;
+    private double rightAxisHorizontalPos = 0.0;
+
+    Trigger leftAnalogTriggerHorizontal;
+    Trigger rightAnalogTriggerHorizontal;
     private int axisCount;
     private int buttonCount;
     private boolean enabled = false;
     public enum RobotMode { DISABLED, AUTONOMOUS, TELEOP, TEST };
 
     /** Constructor */
-    public Controller() {
+    public Controller(Field2d field2d) {
+        field = field2d;
         joystick = new Joystick(OperatorConstants.DRIVER_CONTROLLER_PORT);
         axisCount = 0;
         buttonCount = 0;
@@ -54,6 +77,14 @@ public class Controller {
      * - Adds the newly created Trigger to the buttonTriggers list
      * - This allows us to store and later iterate over all triggers for binding command and other logic
      * 
+     * ----------------------------
+     * Play controller:
+     * - Left analog stick left and right is axis[0] (Left is negative)
+     * - Left analog stick up and down is axis[1] (Up is negative, goes to -1)
+     * - Right analog stick left and right is axis[2] (Left is negative)
+     * - Right analog stick up and down is axis[2] (Up is negative, goes to -1)
+     * - The digital pad is POVs[0]
+     * 
      * @see enableButtonHandler for where the buttonTriggers are used
      */
     private void initialize() {
@@ -61,9 +92,38 @@ public class Controller {
 
         axisCount = joystick.getAxisCount();
         buttonCount = joystick.getButtonCount();
+
         IntStream.range(1, buttonCount + 1).forEach(i -> {
             buttonTriggers.add(new Trigger( () -> enabled && joystick.getRawButtonPressed(i)));
         });
+
+        leftAnalogTriggerHorizontal = new Trigger(() -> {
+            leftAxisHorizontalPos = joystick.getRawAxis(0);
+            return (Math.abs(leftAxisHorizontalPos) > 0.5);
+            })
+            .onTrue(new InstantCommand(() -> 
+                {
+                    Translation2d currentTranslation = currentPose.getTranslation();
+                    Rotation2d currentRotation = currentPose.getRotation();
+                
+                    // Create a new translation offset (X increment)
+                    double deltaX = leftAxisHorizontalPos * 0.1; // scale for realism
+                    double deltaY = 0; 
+                
+                    Translation2d newTranslation = currentTranslation.plus(new Translation2d(deltaX, deltaY));
+                    currentPose = new Pose2d(newTranslation, currentRotation); 
+                
+              
+                    field.setRobotPose(currentPose);
+                    System.out.println("Left stick " + leftAxisHorizontalPos);
+                }));           
+            
+
+        rightAnalogTriggerHorizontal = new Trigger(() -> {
+            rightAxisHorizontalPos = joystick.getRawAxis(2);
+            return (Math.abs(rightAxisHorizontalPos) > 0.5);
+            })
+            .onTrue(new InstantCommand(() -> System.out.println("Right stick " + rightAxisHorizontalPos)));
     }
 
     /**
