@@ -44,10 +44,13 @@ public class Controller {
     List<Trigger> axisTriggers = new ArrayList<>();
     Pose2d currentPose = new Pose2d();
     private double leftAxisHorizontalPos = 0.0;
+    private double leftAxisVerticalPos = 0.0;
     private double rightAxisHorizontalPos = 0.0;
 
     Trigger leftAnalogTriggerHorizontal;
+    Trigger leftAnalogTriggerVertical;
     Trigger rightAnalogTriggerHorizontal;
+    Trigger rightAnalogTriggerVertical;
     private int axisCount;
     private int buttonCount;
     private boolean enabled = false;
@@ -107,7 +110,7 @@ public class Controller {
                     Rotation2d currentRotation = currentPose.getRotation();
                 
                     // Create a new translation offset (X increment)
-                    double deltaX = leftAxisHorizontalPos * 0.1; // scale for realism
+                    double deltaX = leftAxisHorizontalPos * .1; // scale for realism
                     double deltaY = 0; 
                 
                     Translation2d newTranslation = currentTranslation.plus(new Translation2d(deltaX, deltaY));
@@ -116,7 +119,29 @@ public class Controller {
               
                     field.setRobotPose(currentPose);
                     System.out.println("Left stick " + leftAxisHorizontalPos);
-                }));           
+                }));
+                
+        leftAnalogTriggerVertical = new Trigger(() -> {
+            leftAxisVerticalPos = joystick.getRawAxis(1);
+            return (Math.abs(leftAxisVerticalPos) > 0.5);
+            })
+            .onTrue(new InstantCommand(() -> 
+                {
+                    Translation2d currentTranslation = currentPose.getTranslation();
+                    Rotation2d currentRotation = currentPose.getRotation();
+                
+                    // Create a new translation offset (Y increment)
+                    double deltaY = (leftAxisVerticalPos * .1)*-1; // scale for realism
+                                         //inverting position
+                    double deltaX = 0; 
+                
+                    Translation2d newTranslation = currentTranslation.plus(new Translation2d(deltaX, deltaY));
+                    currentPose = new Pose2d(newTranslation, currentRotation); 
+                
+              
+                    field.setRobotPose(currentPose);
+                    System.out.println("Left stick " + leftAxisVerticalPos);
+                }));
             
 
         rightAnalogTriggerHorizontal = new Trigger(() -> {
