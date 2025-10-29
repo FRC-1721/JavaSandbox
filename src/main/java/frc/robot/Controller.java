@@ -1,14 +1,17 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OperatorConstants;
 
 import java.util.ArrayList;
@@ -51,7 +54,6 @@ public class Controller {
     Trigger leftAnalogTriggerVertical;
     Trigger rightAnalogTriggerHorizontal;
     Trigger rightAnalogTriggerVertical;
-    private int axisCount;
     private int buttonCount;
     private boolean enabled = false;
     public enum RobotMode { DISABLED, AUTONOMOUS, TELEOP, TEST };
@@ -60,7 +62,6 @@ public class Controller {
     public Controller(Field2d field2d) {
         field = field2d;
         joystick = new Joystick(OperatorConstants.DRIVER_CONTROLLER_PORT);
-        axisCount = 0;
         buttonCount = 0;
     }
     
@@ -93,18 +94,18 @@ public class Controller {
     private void initialize() {
         buttonTriggers.clear();
 
-        axisCount = joystick.getAxisCount();
         buttonCount = joystick.getButtonCount();
 
         IntStream.range(1, buttonCount + 1).forEach(i -> {
             buttonTriggers.add(new Trigger( () -> enabled && joystick.getRawButtonPressed(i)));
         });
 
+        // The RunCommand() method will run repeatedly while active, as opposed to InstantCommand that runs once
         leftAnalogTriggerHorizontal = new Trigger(() -> {
             leftAxisHorizontalPos = joystick.getRawAxis(0);
             return (Math.abs(leftAxisHorizontalPos) > 0.5);
             })
-            .onTrue(new InstantCommand(() -> 
+            .whileTrue(new RunCommand(() -> 
                 {
                     Translation2d currentTranslation = currentPose.getTranslation();
                     Rotation2d currentRotation = currentPose.getRotation();
@@ -113,10 +114,17 @@ public class Controller {
                     double deltaX = leftAxisHorizontalPos * .1; // scale for realism
                     double deltaY = 0; 
                 
-                    Translation2d newTranslation = currentTranslation.plus(new Translation2d(deltaX, deltaY));
-                    currentPose = new Pose2d(newTranslation, currentRotation); 
+                    currentTranslation = currentTranslation.plus(new Translation2d(deltaX, deltaY));                    
                 
+                    // Clamp the translation within the Reefscape field bounds
+                    double clampedX = MathUtil.clamp(currentTranslation.getX(), 0.0, FieldConstants.FIELD_LENGTH_METERS);
+                    double clampedY = MathUtil.clamp(currentTranslation.getY(), 0.0, FieldConstants.FIELD_WIDTH_METERS);
+
+                    // Reconstruct the translation after clamping
+                    currentTranslation = new Translation2d(clampedX, clampedY);                
               
+                    currentPose = new Pose2d(currentTranslation, currentRotation); 
+
                     field.setRobotPose(currentPose);
                     System.out.println("Left stick " + leftAxisHorizontalPos);
                 }));
@@ -125,20 +133,26 @@ public class Controller {
             leftAxisVerticalPos = joystick.getRawAxis(1);
             return (Math.abs(leftAxisVerticalPos) > 0.5);
             })
-            .onTrue(new InstantCommand(() -> 
+            .whileTrue(new RunCommand(() -> 
                 {
                     Translation2d currentTranslation = currentPose.getTranslation();
                     Rotation2d currentRotation = currentPose.getRotation();
                 
                     // Create a new translation offset (Y increment)
-                    double deltaY = (leftAxisVerticalPos * .1)*-1; // scale for realism
-                                         //inverting position
+                    double deltaY = (leftAxisVerticalPos * .1)*-1; // scale for realism and inverting position                                         
                     double deltaX = 0; 
+
+                    currentTranslation = currentTranslation.plus(new Translation2d(deltaX, deltaY));                    
                 
-                    Translation2d newTranslation = currentTranslation.plus(new Translation2d(deltaX, deltaY));
-                    currentPose = new Pose2d(newTranslation, currentRotation); 
-                
-              
+                    // Clamp the translation within the Reefscape field bounds
+                    double clampedX = MathUtil.clamp(currentTranslation.getX(), 0.0, FieldConstants.FIELD_LENGTH_METERS);
+                    double clampedY = MathUtil.clamp(currentTranslation.getY(), 0.0, FieldConstants.FIELD_WIDTH_METERS);
+
+                    // Reconstruct the translation after clamping
+                    currentTranslation = new Translation2d(clampedX, clampedY);
+                                
+                    currentPose = new Pose2d(currentTranslation, currentRotation); 
+
                     field.setRobotPose(currentPose);
                     System.out.println("Left stick " + leftAxisVerticalPos);
                 }));
