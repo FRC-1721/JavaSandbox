@@ -81,6 +81,7 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    *
    * The CommandScheduler is responsible for managing the execution of commands in a command-based robot program.
+   * It is mandatory to iterate through the Triggers, Commands, and SubSystems
    */
   @Override
   public void robotPeriodic() {
