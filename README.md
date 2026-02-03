@@ -8,6 +8,9 @@
 - If you already have one, skip this step
 - This is mandatory for adding code changes to our repositories on GitHub
 - Your ssh public keys will be in your account, these are needed to push your code
+3) Add the following vendor dependencies, to WPIlib in VSCode, for the given year (remove old ones if needed)
+- CTRE-Phoenix
+- photonlib
 
 <u>**Windows only**</u>
 1) Install the 'git for Windows' command prompt from https://git-scm.com/downloads
