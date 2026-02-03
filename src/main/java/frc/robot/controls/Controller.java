@@ -47,20 +47,20 @@ import java.util.List;
  *          })
  *    - The call of 'new Trigger(...)' instantiates a new Trigger object
  *    - The '=' will then initialize the leftAnalogTriggerHorizontal member variable to the new Trigger object
- *    - The Trigger method has a Constructor that takes a BooleanSupplier, which we can generate with a lambda.
- *    - In Java, a lambda expression is shorthand for creating an instance of a functional interface
+ *    - The Trigger constructor takes a BooleanSupplier, which we can generate with a lambda.
+ *    - In Java, a lambda expression is shorthand for creating an instance of a functional interface.
  *    - In other words:
  *      - The Trigger constructor expects a BooleanSupplier.
  *      - You give it a lambda that returns a boolean.
- *      - The Java compiler says: “That lambda matches the signature of BooleanSupplier.getAsBoolean().”
+ *      - The Java compiler says: "That lambda matches the signature of BooleanSupplier.getAsBoolean()."
  *      - It automatically wraps your lambda in a BooleanSupplier object.
  *
- * 3) The new leftAnalogTriggerHorizontal Trigger must now be added to the WPIlib Command Scheduling System
+ * 3) The new leftAnalogTriggerHorizontal Trigger must now be added to the WPILib Command Scheduling System
  *    leftAnalogTriggerHorizontal.whileTrue(new RunCommand(() -> {...}
  *    - The call to whileTrue will register a listener (an event binding) with the global CommandScheduler instance.
- *    - It says: "CommandScheduler — every time you run, check this trigger’s Boolean supplier, and if it is true, schedule this command.”
+ *    - It says: "CommandScheduler - every time you run, check this trigger's Boolean supplier, and if it is true, schedule this command."
  *
- * 4) the Robot.robotPeriodic() method is called every 20 ms and iterates through all registered triggers, commands, and subsystems.
+ * 4) The Robot.robotPeriodic() method is called every 20 ms and iterates through all registered triggers, commands, and subsystems.
  * 
  * Note: A Trigger is a BooleanSupplier, which is a functional interface in Java
  * - A BooleanSupplier is an object that can supply (return) a boolean value when asked.
